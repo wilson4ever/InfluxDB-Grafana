@@ -43,3 +43,14 @@ python influx_txt_uploader.py >> uploader.log 2>&1
 ```
 
 双击后常驻运行并写日志到 `uploader.log`。
+
+## Grafana 仪表盘 JSON
+新增文件：`grafana_dashboard_science_cavity.json`
+
+导入方法：Grafana -> Dashboards -> New -> Import -> 上传该 JSON。
+
+仪表盘内容：
+- 3 张时间序列图：AOM底座 / IPG外壳 / 真空腔（每张图含设定温度+实际温度）
+- 6 个 Stat 数据块：
+  - 3 个“当前温度”（3 个量的 actual）
+  - 3 个“过去1小时波动”（使用 `stddev(temperature)` 作为方差类指标）
