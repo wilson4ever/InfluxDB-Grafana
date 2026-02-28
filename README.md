@@ -54,3 +54,14 @@ python influx_txt_uploader.py >> uploader.log 2>&1
 - 6 个 Stat 数据块：
   - 3 个“当前温度”（3 个量的 actual）
   - 3 个“过去1小时波动”（使用 `stddev(temperature)` 作为方差类指标）
+
+## 常见问题：导入后没有让你选数据库 / 没有数据
+如果你导入后没有弹出数据源选择，通常是 Dashboard JSON 没有 `__inputs` 定义，已在当前版本修复。
+
+请这样检查：
+1. 导入 `grafana_dashboard_science_cavity.json` 时，选择一个 **InfluxDB 类型**的数据源。
+2. 在该数据源中确认 Database 填的是：`cavityfermi`。
+3. 到 Explore 里先执行：
+   - `SHOW MEASUREMENTS`
+   - `SELECT * FROM "science_cavity" ORDER BY time DESC LIMIT 10`
+4. 如果有数据但面板空白，把 Dashboard 右上角时间范围改为 `Last 24 hours` 再看。
