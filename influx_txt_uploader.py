@@ -43,6 +43,14 @@ DEFAULT_CONFIG = {
                 {"name": "vacuum_cavity", "set_col": 3, "actual_col": 4}
             ],
         },
+        {
+            "path": "20260302161726.txt",
+            "source": "aom_pair",
+            "channels": [
+                {"name": "AOM-1", "set_col": 3, "actual_col": 4},
+                {"name": "AOM-2", "set_col": 5, "actual_col": 6},
+            ],
+        },
     ],
 }
 
