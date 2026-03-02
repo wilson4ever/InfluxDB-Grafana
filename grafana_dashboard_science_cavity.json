@@ -102,7 +102,7 @@
       },
       "targets": [
         {
-          "alias": "AOM底座实际温度",
+          "alias": "AOM-1实际温度",
           "datasource": {
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
@@ -124,13 +124,13 @@
           "measurement": "science_cavity",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"temperature\") FROM \"science_cavity\" WHERE \"channel\"='aom_base' AND \"temp_role\"='actual' AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "query": "SELECT mean(\"temperature\") FROM \"science_cavity\" WHERE \"channel\"='AOM-1' AND \"temp_role\"='actual' AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series"
         },
         {
-          "alias": "AOM底座设定温度",
+          "alias": "AOM-1设定温度",
           "datasource": {
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
@@ -152,13 +152,13 @@
           "measurement": "science_cavity",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"temperature\") FROM \"science_cavity\" WHERE \"channel\"='aom_base' AND \"temp_role\"='setpoint' AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "query": "SELECT mean(\"temperature\") FROM \"science_cavity\" WHERE \"channel\"='AOM-1' AND \"temp_role\"='setpoint' AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series"
         }
       ],
-      "title": "AOM底座温度演化",
+      "title": "AOM-1底座温度演化",
       "type": "timeseries"
     },
     {
@@ -442,7 +442,7 @@
     {
       "id": 10,
       "type": "timeseries",
-      "title": "AOM双通道温度演化",
+      "title": "AOM-2底座温度演化",
       "datasource": {
         "type": "influxdb",
         "uid": "${DS_INFLUXDB}"
@@ -521,62 +521,6 @@
       },
       "targets": [
         {
-          "alias": "AOM-1实际温度",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "science_cavity",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "SELECT mean(\"temperature\") FROM \"science_cavity\" WHERE \"channel\"='AOM-1' AND \"temp_role\"='actual' AND $timeFilter GROUP BY time($__interval) fill(null)",
-          "rawQuery": true,
-          "refId": "A",
-          "resultFormat": "time_series"
-        },
-        {
-          "alias": "AOM-1设定温度",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "science_cavity",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "SELECT mean(\"temperature\") FROM \"science_cavity\" WHERE \"channel\"='AOM-1' AND \"temp_role\"='setpoint' AND $timeFilter GROUP BY time($__interval) fill(null)",
-          "rawQuery": true,
-          "refId": "B",
-          "resultFormat": "time_series"
-        },
-        {
           "alias": "AOM-2实际温度",
           "datasource": {
             "type": "influxdb",
@@ -601,7 +545,7 @@
           "policy": "default",
           "query": "SELECT mean(\"temperature\") FROM \"science_cavity\" WHERE \"channel\"='AOM-2' AND \"temp_role\"='actual' AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
-          "refId": "C",
+          "refId": "A",
           "resultFormat": "time_series"
         },
         {
@@ -629,7 +573,7 @@
           "policy": "default",
           "query": "SELECT mean(\"temperature\") FROM \"science_cavity\" WHERE \"channel\"='AOM-2' AND \"temp_role\"='setpoint' AND $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
-          "refId": "D",
+          "refId": "B",
           "resultFormat": "time_series"
         }
       ]
@@ -695,13 +639,13 @@
             "uid": "${DS_INFLUXDB}"
           },
           "measurement": "science_cavity",
-          "query": "SELECT last(\"temperature\") FROM \"science_cavity\" WHERE \"channel\"='aom_base' AND \"temp_role\"='actual' AND $timeFilter",
+          "query": "SELECT last(\"temperature\") FROM \"science_cavity\" WHERE \"channel\"='AOM-1' AND \"temp_role\"='actual' AND $timeFilter",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series"
         }
       ],
-      "title": "AOM底座 当前温度",
+      "title": "AOM-1底座 当前温度",
       "type": "stat"
     },
     {
@@ -976,13 +920,13 @@
             "uid": "${DS_INFLUXDB}"
           },
           "measurement": "science_cavity",
-          "query": "SELECT stddev(\"temperature\") FROM \"science_cavity\" WHERE \"channel\"='aom_base' AND \"temp_role\"='actual' AND time >= now() - 1h",
+          "query": "SELECT stddev(\"temperature\") FROM \"science_cavity\" WHERE \"channel\"='AOM-1' AND \"temp_role\"='actual' AND time >= now() - 1h",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series"
         }
       ],
-      "title": "AOM底座 1小时波动(StdDev)",
+      "title": "AOM-1底座 1小时波动(StdDev)",
       "type": "stat"
     },
     {

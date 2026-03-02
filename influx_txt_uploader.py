@@ -7,7 +7,7 @@
 
 import argparse
 import json
-import os
+import re
 import time
 from datetime import datetime
 from pathlib import Path
@@ -29,26 +29,19 @@ DEFAULT_CONFIG = {
     "poll_interval_seconds": 60,
     "files": [
         {
-            "path": "20260228153635.txt",
-            "source": "aom_ipg",
-            "channels": [
-                {"name": "aom_base", "set_col": 3, "actual_col": 4},
-                {"name": "ipg_shell", "set_col": 5, "actual_col": 6},
-            ],
-        },
-        {
-            "path": "20260228154001.txt",
-            "source": "vacuum_cavity",
-            "channels": [
-                {"name": "vacuum_cavity", "set_col": 3, "actual_col": 4}
-            ],
-        },
-        {
             "path": "20260302161726.txt",
-            "source": "aom_pair",
+            "source": "vacuum_aom2",
             "channels": [
-                {"name": "AOM-1", "set_col": 3, "actual_col": 4},
-                {"name": "AOM-2", "set_col": 5, "actual_col": 6},
+                {"name": "vacuum_cavity", "set_idx": 0, "actual_idx": 1},
+                {"name": "AOM-2", "set_idx": 2, "actual_idx": 3},
+            ],
+        },
+        {
+            "path": "20260228153635.txt",
+            "source": "aom1_ipg",
+            "channels": [
+                {"name": "AOM-1", "set_idx": 0, "actual_idx": 1},
+                {"name": "ipg_shell", "set_idx": 2, "actual_idx": 3},
             ],
         },
     ],
@@ -98,33 +91,48 @@ def parse_line_to_points(
     if not line:
         return None, []
 
-    tokens = line.split()
-    if len(tokens) < 5:
+    # 兼容两种格式：
+    # 1) 正常空格分隔："3158 2026/3/2 16:18:02 25.01 20.63 20.02 26.2"
+    # 2) 时间戳和第一列黏连："3158 2026/3/2 16:18:0225.01 20.63 20.02 26.2"
+    m = re.match(r"^\s*(\d+)\s+(\d{4}/\d{1,2}/\d{1,2})\s+(\d{1,2}:\d{2}:\d{2})(.*)$", line)
+    if not m:
         return None, []
 
     try:
-        row_index = int(tokens[0])
-        timestamp_ns = parse_timestamp(tokens[1], tokens[2])
+        row_index = int(m.group(1))
+        timestamp_ns = parse_timestamp(m.group(2), m.group(3))
     except Exception:
         return None, []
 
-    points = []
+    tail = m.group(4)
+    value_tokens = re.findall(r"[-+]?\d+(?:\.\d+)?", tail)
+    if len(value_tokens) < 2:
+        return None, []
+
+    points: List[str] = []
     source = escape_tag(file_cfg["source"])
 
     for ch in file_cfg.get("channels", []):
         channel = escape_tag(ch["name"])
-        for role, col_key in (("setpoint", "set_col"), ("actual", "actual_col")):
-            col = ch.get(col_key)
-            if col is None or col >= len(tokens):
+        for role, idx_key, old_col_key in (("setpoint", "set_idx", "set_col"), ("actual", "actual_idx", "actual_col")):
+            idx = ch.get(idx_key)
+            if idx is None and ch.get(old_col_key) is not None:
+                # 兼容旧配置：整行 split 列号 -> 数值区 index
+                idx = int(ch[old_col_key]) - 3
+            if idx is None or idx < 0 or idx >= len(value_tokens):
                 continue
             try:
-                temp = float(tokens[col])
+                temp = float(value_tokens[idx])
             except ValueError:
                 continue
             role_escaped = escape_tag(role)
-            lp = (
-                "%s,source=%s,channel=%s,temp_role=%s temperature=%s %d"
-                % (measurement, source, channel, role_escaped, temp, timestamp_ns)
+            lp = "%s,source=%s,channel=%s,temp_role=%s temperature=%s %d" % (
+                measurement,
+                source,
+                channel,
+                role_escaped,
+                temp,
+                timestamp_ns,
             )
             points.append(lp)
 

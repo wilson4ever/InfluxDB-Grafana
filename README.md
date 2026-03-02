@@ -5,14 +5,14 @@
 ## 适配你的需求
 - 数据库：`cavityfermi`
 - measurement：`science_cavity`
-- 文件 1（`20260228153635.txt`）：
-  - `aom_base`（第1通道：设定温度+实际温度）
-  - `ipg_shell`（第2通道：设定温度+实际温度）
-- 文件 2（`20260228154001.txt`）：
-  - `vacuum_cavity`（设定温度+实际温度）
-- 文件 3（`20260302161726.txt`）：
-  - `AOM-1`（设定温度+实际温度）
-  - `AOM-2`（设定温度+实际温度）
+- 只读取这两个持续更新的文件：
+  - `20260302161726.txt`
+    - `vacuum_cavity`（第1通道：设定温度+实际温度）
+    - `AOM-2`（第2通道：设定温度+实际温度）
+    - 支持“时间戳与第一列数值黏连”的格式（如 `16:18:0225.01 ...`）
+  - `20260228153635.txt`
+    - `AOM-1`（第1通道：设定温度+实际温度）
+    - `ipg_shell`（第2通道：设定温度+实际温度）
 - field 统一用：`temperature`
 - tag 区分：`source`、`channel`、`temp_role(setpoint/actual)`
 
@@ -53,9 +53,9 @@ python influx_txt_uploader.py >> uploader.log 2>&1
 导入方法：Grafana -> Dashboards -> New -> Import -> 上传该 JSON。
 
 仪表盘内容：
-- 4 张时间序列图（2x2）：AOM底座 / IPG外壳 / 真空腔 / AOM双通道（AOM-1 + AOM-2）
+- 4 张时间序列图（2x2）：AOM-1底座 / IPG外壳 / 真空腔 / AOM-2底座
 - 8 个 Stat 数据块（2x4）：
-  - 4 个“当前温度”（AOM底座、IPG外壳、真空腔、AOM-2）
+  - 4 个“当前温度”（AOM-1底座、IPG外壳、真空腔、AOM-2）
   - 4 个“过去1小时波动”（使用 `stddev(temperature)` 作为方差类指标）
 
 ## 常见问题：导入后没有让你选数据库 / 没有数据
