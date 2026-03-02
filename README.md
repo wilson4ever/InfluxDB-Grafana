@@ -65,3 +65,15 @@ python influx_txt_uploader.py >> uploader.log 2>&1
    - `SHOW MEASUREMENTS`
    - `SELECT * FROM "science_cavity" ORDER BY time DESC LIMIT 10`
 4. 如果有数据但面板空白，把 Dashboard 右上角时间范围改为 `Last 24 hours` 再看。
+
+## 单图版 Dashboard（来自你提供的 panel）
+新增：`grafana_dashboard_temperature_cavity_setup.json`
+
+包含 3 个面板：
+- 1 个时间序列图：`Temperature Cavity Experiment`
+- 1 个 Stat：当前温度（`last(value)`）
+- 1 个 Stat：1小时温度方差（`variance(value)`）
+
+查询基于：
+- measurement: `supmea`
+- tag: `name::tag = Temperature Cavity Setup`
